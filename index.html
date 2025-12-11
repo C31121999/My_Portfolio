@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chamaylee Gunawardana | Digital Creative Interactive Portfolio</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts: Space Grotesk for headings, Inter for body -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght=500;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#18181b',   // Zinc 950
+                        secondary: '#52525b', // Zinc 600
+                        accent: '#8b5cf6',    // Violet 500
+                        accentHover: '#7c3aed', // Violet 600
+                        bgLight: '#fafafa',   // Zinc 50
+                        surface: '#ffffff',
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'slide-up': 'slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        slideUp: {
+                            '0%': { opacity: 0, transform: 'translateY(40px)' },
+                            '100%': { opacity: 1, transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Styles for Chart Container - Mandatory Per Instructions */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px;
+            max-height: 400px;
+        }
+        
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 300px;
+            }
+        }
+
+        /* Gradient Text Utility */
+        .text-gradient {
+            background: linear-gradient(135deg, #2563eb, #8b5cf6, #db2777);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Card Hover Effects */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
+        
+        .nav-glass {
+            background: rgba(250, 250, 250, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        /* Hide Scrollbar for clean UI in specific containers */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Animation Delays */
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+    </style>
+</head>
+<body class="bg-bgLight text-primary antialiased selection:bg-accent selection:text-white">
+
+    <!-- Application Layout: Single Page App Structure -->
+    
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 nav-glass transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <a href="#home" class="font-display font-bold text-2xl tracking-tighter group">
+                    Chamaylee<span class="text-accent group-hover:text-pink-500 transition-colors">G.</span>
+                </a>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <button onclick="scrollToSection('skills')" class="text-sm font-medium text-secondary hover:text-accent transition-colors">Expertise</button>
+                    <button onclick="scrollToSection('experience')" class="text-sm font-medium text-secondary hover:text-accent transition-colors">Work History</button>
+                    <button onclick="scrollToSection('education')" class="text-sm font-medium text-secondary hover:text-accent transition-colors">Education</button>
+                    <button onclick="scrollToSection('portfolio')" class="text-sm font-medium text-secondary hover:text-accent transition-colors">Work</button>
+                    <a href="Assets/CV.pdf" class="px-5 py-2.5 rounded-full bg-primary text-white text-sm font-medium hover:bg-accent hover:shadow-lg hover:shadow-accent/30 transition-all duration-300 transform hover:-translate-y-0.5">
+                        Download CV
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-primary focus:outline-none">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-gray-100 absolute w-full px-6 py-4 shadow-xl">
+            <div class="flex flex-col space-y-4">
+                <button onclick="scrollToSection('skills')" class="text-left font-medium text-secondary">Expertise</button>
+                <button onclick="scrollToSection('experience')" class="text-left font-medium text-secondary">Experiences</button>
+                <button onclick="scrollToSection('education')" class="text-left font-medium text-secondary">Education</button>
+                <button onclick="scrollToSection('portfolio')" class="text-left font-medium text-secondary">Work</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-20">
+
+        <!-- Hero Section: Dynamic Introduction -->
+        <section id="home" class="min-h-[90vh] flex items-center justify-center relative overflow-hidden">
+            <!-- Background Decorative Elements -->
+            <div class="absolute top-20 left-10 w-72 h-72 bg-blue-400/10 rounded-full blur-3xl mix-blend-multiply animate-pulse"></div>
+            <div class="absolute bottom-10 right-10 w-96 h-96 bg-purple-400/10 rounded-full blur-3xl mix-blend-multiply animate-pulse" style="animation-delay: 2s;"></div>
+
+            <div class="max-w-7xl mx-auto px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
+                <div class="space-y-8 text-center lg:text-left">
+                    <div class="inline-flex items-center px-3 py-1 rounded-full border border-accent/20 bg-accent/5 text-accent text-xs font-bold tracking-wide uppercase animate-slide-up">
+                        <span class="w-2 h-2 rounded-full bg-accent mr-2 animate-pulse"></span>
+                        Available for hire
+                    </div>
+                    <h1 class="font-display text-5xl lg:text-7xl font-bold leading-tight animate-slide-up delay-100">
+                        Chamaylee Abesiri Gunawardana <br>
+                        <span class="text-gradient">Experiences.</span>
+                    </h1>
+                    <p class="text-lg text-secondary max-w-lg mx-auto lg:mx-0 leading-relaxed animate-slide-up delay-200">
+                        I'm Chamaylee, a full-time student seeking work opportunities. I specialize in turning complex problems into elegant, scalable, and high-performance user interfaces.
+                    </p>
+                    <div class="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start animate-slide-up delay-300">
+                        <button onclick="scrollToSection('portfolio')" class="px-8 py-3.5 rounded-full bg-primary text-white font-medium hover:bg-accent hover:shadow-lg hover:shadow-accent/25 transition-all w-full sm:w-auto">
+                            View My Work
+                        </button>
+                        <a href="#contact" class="px-8 py-3.5 rounded-full border border-gray-200 bg-white text-primary font-medium hover:border-accent hover:text-accent transition-all w-full sm:w-auto">
+                            Let's Connect
+                        </a>
+                    </div>
+                    
+                    <!-- Quick Stats Row -->
+                    <div class="pt-8 flex items-center justify-center lg:justify-start gap-8 border-t border-gray-100 animate-slide-up delay-300">
+                        <div>
+                            <p class="text-3xl font-display font-bold text-primary">none</p>
+                            <p class="text-xs text-secondary uppercase tracking-wider">Years Exp.</p>
+                        </div>
+                        <div>
+                            <p class="text-3xl font-display font-bold text-primary">40%</p>
+                            <p class="text-xs text-secondary uppercase tracking-wider">Perf. Boost</p>
+                        </div>
+                        <div>
+                            <p class="text-3xl font-display font-bold text-primary">20+</p>
+                            <p class="text-xs text-secondary uppercase tracking-wider">Projects</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visual Element: Interactive Profile/Abstract Art -->
+                <div class="relative animate-float hidden lg:block">
+                    <div class="relative z-10 w-full max-w-md mx-auto aspect-square rounded-[2rem] overflow-hidden shadow-2xl shadow-indigo-500/20 bg-white p-2">
+                        <img src="Assets/Profile picture.jpg" alt="Chamaylee G" class="w-full h-full object-cover rounded-[1.5rem] filter grayscale hover:grayscale-0 transition-all duration-700">
+                        
+                        <!-- Floating Badge 1 -->
+                        <div class="absolute top-8 -right-8 bg-white p-4 rounded-xl shadow-lg border border-gray-50 flex items-center gap-3 animate-float" style="animation-delay: 1s;">
+                            <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                                <i class="fa-brands fa-react text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-400 font-medium">Specialist</p>
+                                <p class="text-sm font-bold text-gray-800">HTML</p>
+                            </div>
+                        </div>
+
+                        <!-- Floating Badge 2 -->
+                        <div class="absolute bottom-8 -left-8 bg-white p-4 rounded-xl shadow-lg border border-gray-50 flex items-center gap-3 animate-float" style="animation-delay: 2s;">
+                            <div class="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center text-purple-600">
+                                <i class="fa-solid fa-wand-magic-sparkles text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-400 font-medium">Design</p>
+                                <p class="text-sm font-bold text-gray-800">UI/UX Magic</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skill Analysis Section: Data Visualization -->
+        <section id="skills" class="py-24 bg-white relative">
+            <div class="max-w-7xl mx-auto px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <h2 class="font-display text-4xl font-bold mb-4">Technical <span class="text-gradient">Proficiency</span></h2>
+                    <p class="text-secondary text-lg">
+                        A visualized breakdown of my technical arsenal. I bridge the gap between creative design and robust engineering, ensuring scalability and user delight.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                    <!-- Interactive Chart -->
+                    <div class="order-2 lg:order-1">
+                         <div class="chart-container bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+                            <canvas id="skillsChart"></canvas>
+                        </div>
+                        <div class="mt-6 text-center">
+                            <p class="text-sm text-gray-400 italic">
+                                <i class="fa-solid fa-info-circle mr-1"></i> Interactive: Hover over points for details
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Skills List / Detail View -->
+                    <div class="order-1 lg:order-2 space-y-8">
+                        <!-- Category 1 -->
+                        <div class="group p-6 rounded-2xl bg-bgLight hover:bg-white border border-transparent hover:border-gray-100 hover:shadow-xl hover:shadow-indigo-500/5 transition-all duration-300">
+                            <div class="flex items-center gap-4 mb-3">
+                                <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-code"></i>
+                                </div>
+                                <h3 class="font-display text-xl font-bold">Frontend Engineering</h3>
+                            </div>
+                            <p class="text-secondary text-sm mb-4">HTML, Javascript, React, Tailwind CSS. Focus on performance and accessibility.</p>
+                            <div class="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden">
+                                <div class="bg-blue-500 h-1.5 rounded-full" style="width: 95%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Category 2 -->
+                        <div class="group p-6 rounded-2xl bg-bgLight hover:bg-white border border-transparent hover:border-gray-100 hover:shadow-xl hover:shadow-purple-500/5 transition-all duration-300">
+                            <div class="flex items-center gap-4 mb-3">
+                                <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-server"></i>
+                                </div>
+                                <h3 class="font-display text-xl font-bold">Backend Integration</h3>
+                            </div>
+                            <p class="text-secondary text-sm mb-4">Node.js, Python. Building scalable APIs and data structures.</p>
+                            <div class="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden">
+                                <div class="bg-purple-500 h-1.5 rounded-full" style="width: 80%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Category 3 -->
+                        <div class="group p-6 rounded-2xl bg-bgLight hover:bg-white border border-transparent hover:border-gray-100 hover:shadow-xl hover:shadow-pink-500/5 transition-all duration-300">
+                            <div class="flex items-center gap-4 mb-3">
+                                <div class="w-12 h-12 rounded-xl bg-pink-100 text-pink-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-pen-nib"></i>
+                                </div>
+                                <h3 class="font-display text-xl font-bold">UI/UX & Tools</h3>
+                            </div>
+                            <p class="text-secondary text-sm mb-4">Figma, Balsam, NetBeans, VS Code, Python 3.9. Bridging design and development workflows.</p>
+                            <div class="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden">
+                                <div class="bg-pink-500 h-1.5 rounded-full" style="width: 85%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Professional Experience: Interactive Timeline -->
+        <section id="experience" class="py-24 bg-bgLight">
+            <div class="max-w-6xl mx-auto px-6 lg:px-8">
+                <div class="mb-16 text-center">
+                    <h2 class="font-display text-4xl font-bold mb-4">Professional <span class="text-gradient">Work History</span></h2>
+                    <p class="text-secondary">Key roles and professional milestones in my career evolution.</p>
+                </div>
+
+                <div class="relative">
+                    <!-- Vertical Line -->
+                    <div class="absolute left-0 md:left-1/2 transform md:-translate-x-1/2 h-full w-0.5 bg-gray-200"></div>
+
+                    <div class="space-y-12">
+                        
+                        <!-- Item 1: Job -->
+                        <div class="relative flex flex-col md:flex-row items-center justify-between group">
+                            <div class="md:w-5/12 order-2 md:order-1 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="px-2 py-1 rounded text-xs font-bold bg-green-100 text-green-700">Present</span>
+                                    <span class="text-xs text-gray-400">July 2022 - Now</span>
+                                </div>
+                                <h3 class="text-lg font-bold text-primary">Voluntary English Language Teacher </h3>
+                                <p class="text-sm font-medium text-accent mb-2">Sobana English Education Center</p>
+                                <p class="text-secondary text-sm leading-relaxed">
+                                    Teaching Local Syllabus English Language to Grade 5, 6 and 7 for underprivileged childern.
+                                </p>
+                            </div>
+                            <div class="absolute left-0 md:left-1/2 transform -translate-x-1/2 -translate-y-1/2 md:-translate-y-0 flex items-center justify-center w-10 h-10 rounded-full bg-accent border-4 border-white shadow-lg z-10 top-0 md:top-auto">
+                                <i class="fa-solid fa-briefcase text-white text-xs"></i>
+                            </div>
+                            <div class="md:w-5/12 order-1 md:order-2"></div> <!-- Spacer -->
+                        </div>
+
+                        <!-- Item 2: Job -->
+                        <div class="relative flex flex-col md:flex-row items-center justify-between group">
+                            <div class="md:w-5/12 order-1 hidden md:block"></div> <!-- Spacer -->
+                            <div class="absolute left-0 md:left-1/2 transform -translate-x-1/2 flex items-center justify-center w-10 h-10 rounded-full bg-white border-4 border-gray-100 shadow-md z-10 top-0 md:top-auto">
+                                <i class="fa-solid fa-code text-secondary text-xs"></i>
+                            </div>
+                            <div class="md:w-5/12 order-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="text-xs text-gray-400">June 2024 - Jan 2025</span>
+                                </div>
+                                <h3 class="text-lg font-bold text-primary">English Language Teacher</h3>
+                                <p class="text-sm font-medium text-accent mb-2">i-Gate College </p>
+                                <p class="text-secondary text-sm leading-relaxed">Teaching Local Syllabus English Language to Grade 6 and 7.</p>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Academic Qualifications: Dedicated Section -->
+        <section id="education" class="py-24 bg-white">
+            <div class="max-w-6xl mx-auto px-6 lg:px-8">
+                <div class="mb-16 text-center">
+                    <h2 class="font-display text-4xl font-bold mb-4">Academic <span class="text-gradient">Qualifications</span></h2>
+                    <p class="text-secondary">My formal education and specialized certifications that built my technical foundation.</p>
+                </div>
+
+                <div class="relative">
+                    <!-- Vertical Line -->
+                    <div class="absolute left-0 md:left-1/2 transform md:-translate-x-1/2 h-full w-0.5 bg-gray-200"></div>
+
+                    <div class="space-y-12">
+                        
+                        <!-- Item 1: Education (Certificate) -->
+                        <div class="relative flex flex-col md:flex-row items-center justify-between group">
+                            <div class="md:w-5/12 order-2 md:order-1 bg-bgLight p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="text-xs text-gray-400">2018</span>
+                                </div>
+                                <h3 class="text-lg font-bold text-primary">Certificate in International Relations </h3>
+                                <p class="text-sm font-medium text-purple-600 mb-2">Bandaranaike Center for International Studies</p>
+                                <p class="text-secondary text-sm leading-relaxed">
+                                    Professional Certification in Cloud Computing. Specialized training in serverless architectures and scalable deployment strategies.
+                                </p>
+                            </div>
+                            <div class="absolute left-0 md:left-1/2 transform -translate-x-1/2 flex items-center justify-center w-10 h-10 rounded-full bg-white border-4 border-gray-100 shadow-md z-10 top-0 md:top-auto">
+                                <i class="fa-solid fa-certificate text-secondary text-xs"></i>
+                            </div>
+                            <div class="md:w-5/12 order-1 md:order-2"></div> <!-- Spacer -->
+                        </div>
+
+                        <div class="relative flex flex-col md:flex-row items-center justify-between group">
+                            <div class="md:w-5/12 order-2 md:order-1 bg-bgLight p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="text-xs text-gray-400">2020</span>
+                                </div>
+                                <h3 class="text-lg font-bold text-primary">Foundation Course in Human Resource Management</h3>
+                                <p class="text-sm font-medium text-purple-600 mb-2">Chartered Institute of Personal Management </p>
+                                <p class="text-secondary text-sm leading-relaxed">
+                                    Professional Certification in Cloud Computing. Specialized training in serverless architectures and scalable deployment strategies.
+                                </p>
+                            </div>
+                            <div class="absolute left-0 md:left-1/2 transform -translate-x-1/2 flex items-center justify-center w-10 h-10 rounded-full bg-white border-4 border-gray-100 shadow-md z-10 top-0 md:top-auto">
+                                <i class="fa-solid fa-certificate text-secondary text-xs"></i>
+                            </div>
+                            <div class="md:w-5/12 order-1 md:order-2"></div> <!-- Spacer -->
+                        </div>
+
+                        <div class="relative flex flex-col md:flex-row items-center justify-between group">
+                            <div class="md:w-5/12 order-2 md:order-1 bg-bgLight p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="text-xs text-gray-400">2019</span>
+                                </div>
+                                <h3 class="text-lg font-bold text-primary">Certificate Course of Human Resource Management </h3>
+                                <p class="text-sm font-medium text-purple-600 mb-2">Chartered Institute of Personal Management </p>
+                                <p class="text-secondary text-sm leading-relaxed">
+                                    Professional Certification in Cloud Computing. Specialized training in serverless architectures and scalable deployment strategies.
+                                </p>
+                            </div>
+                            <div class="absolute left-0 md:left-1/2 transform -translate-x-1/2 flex items-center justify-center w-10 h-10 rounded-full bg-white border-4 border-gray-100 shadow-md z-10 top-0 md:top-auto">
+                                <i class="fa-solid fa-certificate text-secondary text-xs"></i>
+                            </div>
+                            <div class="md:w-5/12 order-1 md:order-2"></div> <!-- Spacer -->
+                        </div>
+
+                        <div class="relative flex flex-col md:flex-row items-center justify-between group">
+                            <div class="md:w-5/12 order-2 md:order-1 bg-bgLight p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="text-xs text-gray-400">2021</span>
+                                </div>
+                                <h3 class="text-lg font-bold text-primary">Advance Certificate in Sciences</h3>
+                                <p class="text-sm font-medium text-purple-600 mb-2">The Open University of Sri Lanka</p>
+                                <p class="text-secondary text-sm leading-relaxed">
+                                    Professional Certification in Cloud Computing. Specialized training in serverless architectures and scalable deployment strategies.
+                                </p>
+                            </div>
+                            <div class="absolute left-0 md:left-1/2 transform -translate-x-1/2 flex items-center justify-center w-10 h-10 rounded-full bg-white border-4 border-gray-100 shadow-md z-10 top-0 md:top-auto">
+                                <i class="fa-solid fa-certificate text-secondary text-xs"></i>
+                            </div>
+                            <div class="md:w-5/12 order-1 md:order-2"></div> <!-- Spacer -->
+                        </div>
+
+                        <!-- Item 2: Education (Master's) -->
+                        <div class="relative flex flex-col md:flex-row items-center justify-between group">
+                             <div class="md:w-5/12 order-1 hidden md:block"></div> <!-- Spacer -->
+                            <div class="absolute left-0 md:left-1/2 transform -translate-x-1/2 flex items-center justify-center w-10 h-10 rounded-full bg-white border-4 border-gray-100 shadow-md z-10 top-0 md:top-auto">
+                                <i class="fa-solid fa-graduation-cap text-secondary text-xs"></i>
+                            </div>
+                            <div class="md:w-5/12 order-2 bg-bgLight p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="text-xs text-gray-400">2019</span>
+                                </div>
+                                <h3 class="text-lg font-bold text-primary">Diploma in CAD</h3>
+                                <p class="text-sm font-medium text-purple-600 mb-2">SFS Academy</p>
+                                <p class="text-secondary text-sm leading-relaxed">
+                                    Computer Science. Thesis: Scalable Design Systems for Enterprise Apps.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Item 3: Education (Bachelor's) -->
+                        <div class="relative flex flex-col md:flex-row items-center justify-between group">
+                            <div class="md:w-5/12 order-2 md:order-1 bg-bgLight p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="text-xs text-gray-400">2023 - Now</span>
+                                </div>
+                                <h3 class="text-lg font-bold text-primary">Bachelor of Software Engineering (B.Sc.)</h3>
+                                <p class="text-sm font-medium text-purple-600 mb-2">The Open University of Sri Lanka</p>
+                                <p class="text-secondary text-sm leading-relaxed">
+                                    Software Engineering.
+                                </p>
+                            </div>
+                            <div class="absolute left-0 md:left-1/2 transform -translate-x-1/2 flex items-center justify-center w-10 h-10 rounded-full bg-white border-4 border-gray-100 shadow-md z-10 top-0 md:top-auto">
+                                <i class="fa-solid fa-university text-secondary text-xs"></i>
+                            </div>
+                            <div class="md:w-5/12 order-1 md:order-2"></div> <!-- Spacer -->
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Portfolio Showcase: Filterable Grid -->
+        <section id="portfolio" class="py-24 bg-white">
+            <div class="max-w-7xl mx-auto px-6 lg:px-8">
+                <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+                    <div>
+                        <h2 class="font-display text-4xl font-bold mb-2">Showcase <span class="text-gradient">Works</span></h2>
+                        <p class="text-secondary">Explore my latest projects across web, mobile, and design.</p>
+                    </div>
+                    
+                    <!-- Filters -->
+                    <div class="flex flex-wrap gap-2" id="portfolio-filters">
+                        <button class="filter-btn px-4 py-2 rounded-lg text-sm font-medium transition-all bg-primary text-white" data-filter="all">All</button>
+                        <button class="filter-btn px-4 py-2 rounded-lg text-sm font-medium transition-all bg-gray-100 text-secondary hover:bg-gray-200" data-filter="website">Websites</button>
+                        <button class="filter-btn px-4 py-2 rounded-lg text-sm font-medium transition-all bg-gray-100 text-secondary hover:bg-gray-200" data-filter="mobile">Mobile Apps</button>
+                        <button class="filter-btn px-4 py-2 rounded-lg text-sm font-medium transition-all bg-gray-100 text-secondary hover:bg-gray-200" data-filter="design">Designs</button>
+                    </div>
+                </div>
+
+                <!-- Projects Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="portfolio-grid">
+                    
+                    <!-- Project 1 -->
+                    <div class="project-card group rounded-2xl overflow-hidden cursor-pointer relative" data-category="website">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 flex flex-col justify-end p-6">
+                            <span class="text-accent text-xs font-bold uppercase tracking-wider mb-1 translate-y-4 group-hover:translate-y-0 transition-transform duration-300">Website</span>
+                            <h3 class="text-white text-xl font-bold mb-2 translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-75">Library Management System</h3>
+                            <p class="text-gray-300 text-sm translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-100">An online solution developed for schools to organize and manage their library.</p>
+                        </div>
+                        <div class="h-64 bg-gray-200 overflow-hidden">
+                             <!-- Placeholder Art for Project -->
+                             <div class="w-full h-full bg-slate-800 flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
+                                <i class="fa-solid fa-book text-6xl text-gray-700 group-hover:text-accent transition-colors"></i>
+                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 2 -->
+                    <div class="project-card group rounded-2xl overflow-hidden cursor-pointer relative" data-category="website">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 flex flex-col justify-end p-6">
+                            <span class="text-accent text-xs font-bold uppercase tracking-wider mb-1 translate-y-4 group-hover:translate-y-0 transition-transform duration-300">Website</span>
+                            <h3 class="text-white text-xl font-bold mb-2 translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-75">Recipe Sharing</h3>
+                            <p class="text-gray-300 text-sm translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-100">A website developed for users to upload their recipes and try other recipes.</p>
+                        </div>
+                        <div class="h-64 bg-gray-200 overflow-hidden">
+                             <div class="w-full h-full bg-slate-800 flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
+                                <i class="fa-solid fa-bowl-food text-6xl text-gray-700 group-hover:text-pink-500 transition-colors"></i>
+                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 3 -->
+                    <div class="project-card group rounded-2xl overflow-hidden cursor-pointer relative" data-category="design">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 flex flex-col justify-end p-6">
+                            <span class="text-accent text-xs font-bold uppercase tracking-wider mb-1 translate-y-4 group-hover:translate-y-0 transition-transform duration-300">Design</span>
+                            <h3 class="text-white text-xl font-bold mb-2 translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-75">Smart Farm</h3>
+                            <p class="text-gray-300 text-sm translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-100">Figma prototype for farmers.</p>
+                        </div>
+                        <div class="h-64 bg-gray-200 overflow-hidden">
+                             <div class="w-full h-full bg-slate-800 flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
+                                <i class="fa-solid fa-seedling text-6xl text-gray-700 group-hover:text-purple-500 transition-colors"></i>
+                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 4 -->
+                    <div class="project-card group rounded-2xl overflow-hidden cursor-pointer relative" data-category="website">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 flex flex-col justify-end p-6">
+                            <span class="text-accent text-xs font-bold uppercase tracking-wider mb-1 translate-y-4 group-hover:translate-y-0 transition-transform duration-300">Website</span>
+                            <h3 class="text-white text-xl font-bold mb-2 translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-75">Tech Blog Platform</h3>
+                            <p class="text-gray-300 text-sm translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-100">Next.js and Headless CMS architecture.</p>
+                        </div>
+                        <div class="h-64 bg-gray-200 overflow-hidden">
+                             <div class="w-full h-full bg-slate-800 flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
+                                <i class="fa-solid fa-newspaper text-6xl text-gray-700 group-hover:text-blue-500 transition-colors"></i>
+                             </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-24 bg-primary text-white relative overflow-hidden">
+             <!-- Background Accents -->
+             <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-accent/10 rounded-full blur-[100px] pointer-events-none"></div>
+
+            <div class="max-w-4xl mx-auto px-6 lg:px-8 text-center relative z-10">
+                <h2 class="font-display text-4xl lg:text-5xl font-bold mb-6">Ready to create something <br><span class="text-accent">extraordinary?</span></h2>
+                <p class="text-gray-400 text-lg mb-12 max-w-2xl mx-auto">
+                    Whether you have a job offer, a collaboration idea, or just want to chat about React vs Vue, my inbox is always open.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                    <a href="mailto:chamayleeg@gmail.com" class="p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:scale-105 transition-all group">
+                        <div class="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-4 text-accent group-hover:text-white transition-colors">
+                            <i class="fa-solid fa-envelope"></i>
+                        </div>
+                        <h3 class="font-bold mb-1">Email</h3>
+                        <p class="text-sm text-gray-400">chamayleeg@gmail.com</p>
+                    </a>
+                    
+                    <a href="https://www.linkedin.com/in/chamaylee-gunawardana-b36aa5259" class="p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:scale-105 transition-all group">
+                        <div class="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center mx-auto mb-4 text-blue-400 group-hover:text-white transition-colors">
+                            <i class="fa-brands fa-linkedin"></i>
+                        </div>
+                        <h3 class="font-bold mb-1">LinkedIn</h3>
+                        <p class="text-sm text-gray-400"></p>
+                    </a>
+
+                    <a href="https://github.com/C31121999?tab=repositories" class="p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:scale-105 transition-all group">
+                        <div class="w-12 h-12 rounded-full bg-gray-500/20 flex items-center justify-center mx-auto mb-4 text-gray-400 group-hover:text-white transition-colors">
+                            <i class="fa-brands fa-github"></i>
+                        </div>
+                        <h3 class="font-bold mb-1">GitHub</h3>
+                        <p class="text-sm text-gray-400"></p>
+                    </a>
+
+                    <a href="https://www.facebook.com/share/16uwQhZnjK/?mibextid=wwXIfr" class="p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:scale-105 transition-all group">
+                        <div class="w-12 h-12 rounded-full bg-gray-500/20 flex items-center justify-center mx-auto mb-4 text-gray-400 group-hover:text-white transition-colors">
+                            <i class="fa-brands fa-facebook"></i>
+                        </div>
+                        <h3 class="font-bold mb-1">Facebook</h3>
+                        <p class="text-sm text-gray-400">Chamaylee Gunawardana</p>
+                    </a>
+                </div>
+
+                <a href="mailto:chamayleeg@gmail.com" class="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-accent text-white font-bold hover:bg-white hover:text-primary transition-all shadow-lg shadow-accent/25">
+                    Start a Conversation <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+        </section>
+
+        <footer class="py-8 bg-black text-center border-t border-white/10">
+            <p class="text-gray-500 text-sm">© 2025 Chamaylee Gunawardana. Crafted with <i class="fa-solid fa-heart text-red-500 mx-1"></i> and Code.</p>
+        </footer>
+
+    </main>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- State Management ---
+        const state = {
+            currentFilter: 'all',
+            chartInstance: null
+        };
+
+        // --- Data Store ---
+        const skillsData = {
+            labels: ['Frontend (React)', 'Backend (Node)', 'UI Design', 'DevOps', 'Testing', 'Leadership'],
+            datasets: [{
+                label: 'Proficiency Level',
+                data: [95, 80, 85, 70, 75, 85],
+                fill: true,
+                backgroundColor: 'rgba(139, 92, 246, 0.2)', // Accent color with opacity
+                borderColor: '#8b5cf6', // Accent color
+                pointBackgroundColor: '#ffffff',
+                pointBorderColor: '#8b5cf6',
+                pointHoverBackgroundColor: '#8b5cf6',
+                pointHoverBorderColor: '#ffffff',
+                borderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 6
+            }]
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initChart();
+            initNavigation();
+            initPortfolioFilter();
+            initScrollAnimations();
+        });
+
+        // --- 1. Chart Initialization (Chart.js) ---
+        function initChart() {
+            const ctx = document.getElementById('skillsChart').getContext('2d');
+            
+            // Custom config for a trendy Radar chart
+            state.chartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: skillsData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false, // Vital for responsiveness
+                    scales: {
+                        r: {
+                            angleLines: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            pointLabels: {
+                                font: {
+                                    family: "'Space Grotesk', sans-serif",
+                                    size: 12,
+                                    weight: 'bold'
+                                },
+                                color: '#52525b'
+                            },
+                            ticks: {
+                                display: false, // Hide numbers for cleaner look
+                                maxTicksLimit: 5
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 100
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false // Hide legend for cleaner look
+                        },
+                        tooltip: {
+                            backgroundColor: '#18181b',
+                            titleFont: { family: 'Inter', size: 13 },
+                            bodyFont: { family: 'Inter', size: 13 },
+                            padding: 10,
+                            cornerRadius: 8,
+                            displayColors: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return context.raw + '% Proficiency';
+                                }
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 2000,
+                        easing: 'easeOutQuart'
+                    }
+                }
+            });
+        }
+
+        // --- 2. Portfolio Filtering Logic ---
+        function initPortfolioFilter() {
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            const projectCards = document.querySelectorAll('.project-card');
+
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Update Active State
+                    filterBtns.forEach(b => {
+                        b.classList.remove('bg-primary', 'text-white');
+                        b.classList.add('bg-gray-100', 'text-secondary');
+                    });
+                    btn.classList.remove('bg-gray-100', 'text-secondary');
+                    btn.classList.add('bg-primary', 'text-white');
+
+                    const filterValue = btn.getAttribute('data-filter');
+                    
+                    // Filter Grid
+                    projectCards.forEach(card => {
+                        const category = card.getAttribute('data-category');
+                        
+                        // Reset animation class to re-trigger
+                        card.classList.remove('animate-fade-in');
+                        
+                        if (filterValue === 'all' || category === filterValue) {
+                            card.style.display = 'block';
+                            // Small timeout to allow display:block to apply before opacity transition
+                            setTimeout(() => {
+                                card.classList.remove('opacity-0', 'scale-95');
+                                card.classList.add('opacity-100', 'scale-100');
+                            }, 50);
+                        } else {
+                            card.classList.add('opacity-0', 'scale-95');
+                            card.classList.remove('opacity-100', 'scale-100');
+                            setTimeout(() => {
+                                card.style.display = 'none';
+                            }, 300); // Wait for transition
+                        }
+                    });
+                });
+            });
+        }
+
+        // --- 3. Navigation & Scroll Logic ---
+        function initNavigation() {
+            const navbar = document.getElementById('navbar');
+            const mobileBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            // Scroll effect for navbar
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 20) {
+                    navbar.classList.add('shadow-sm');
+                    navbar.classList.replace('nav-glass', 'bg-white/95');
+                } else {
+                    navbar.classList.remove('shadow-sm');
+                    navbar.classList.replace('bg-white/95', 'nav-glass');
+                }
+            });
+
+            // Mobile Menu Toggle
+            mobileBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+                const icon = mobileBtn.querySelector('i');
+                if (mobileMenu.classList.contains('hidden')) {
+                    icon.classList.remove('fa-xmark');
+                    icon.classList.add('fa-bars');
+                } else {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-xmark');
+                }
+            });
+        }
+
+        // Smooth Scroll Helper
+        window.scrollToSection = function(id) {
+            const element = document.getElementById(id);
+            const offset = 80; // height of sticky nav
+            const bodyRect = document.body.getBoundingClientRect().top;
+            const elementRect = element.getBoundingClientRect().top;
+            const elementPosition = elementRect - bodyRect;
+            const offsetPosition = elementPosition - offset;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+
+            // Close mobile menu if open
+            document.getElementById('mobile-menu').classList.add('hidden');
+        };
+
+        // --- 4. Animation Observer ---
+        function initScrollAnimations() {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('opacity-100', 'translate-y-0');
+                        entry.target.classList.remove('opacity-0', 'translate-y-10');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            // Select elements to animate (Timeline items, Skills cards)
+            // We manually add transition classes here for simplicity in JS selection
+            const animatedElements = document.querySelectorAll('.group');
+            animatedElements.forEach((el, index) => {
+                el.classList.add('transition-all', 'duration-700', 'opacity-0', 'translate-y-10');
+                // Stagger delay based on index modulo to avoid huge delays
+                el.style.transitionDelay = `${(index % 4) * 100}ms`;
+                observer.observe(el);
+            });
+        }
+
+    </script>
+    
+</body>
+</html>
